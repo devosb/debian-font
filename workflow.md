@@ -2,14 +2,9 @@
 
 # Initial
 
-## Debian server
+## Salsa
 
-- ssh git.debian.org
-- cd /srv/git.debian.org/git/pkg-fonts/
-- ./setup-repository fonts-sil-YOURFONT 'Packaging for fonts-sil-YOURFONT'
-
-Debian packaging for fonts-sil-YOURFONT
-
+Project description: Debian packaging for fonts-sil-YOURFONT
 
 ## Local
 
@@ -21,10 +16,6 @@ Debian packaging for fonts-sil-YOURFONT
 - gbp import-orig ../../upstream/Font-version.tar.xz
 - git add debian
 - git commit -m "Add packaging files"
-
-### old
-
-- gbp import-dsc --create-missing-branches package-name-version.dsc
 
 ### From Debian
 
@@ -43,12 +34,13 @@ Debian packaging for fonts-sil-YOURFONT
 
 - `cd debian`
 - dch -i
-- gedit *
+- code *
+- wrap-and-sort -asb # maybe
 - cd ..
 - git commit -a
 - gbp buildpackage
 - `git commit -a -m "Update packaging for new upstream release"`
 - `git commit -a -m "Update and improve packaging"`
-- git tag -a debian/version
+- git tag -a debian/version # i.e., debian/1.000-1
 - git push --all
 - git push --tags
