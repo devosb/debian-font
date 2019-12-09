@@ -4,7 +4,10 @@
 
 ## Salsa
 
-Project description: Debian packaging for fonts-sil-YOURFONT
+Under the section `Settings/General`
+- Project description (optional): Debian packaging for fonts-sil-YOURFONT
+Under the section `Settings/CI CD` then `General pipelines`
+- Custom CI configuration path: `debian/salsa-ci.yml`
 
 ## Local
 
@@ -14,6 +17,9 @@ Project description: Debian packaging for fonts-sil-YOURFONT
 - `git commit -m "update gbp.conf"`
 - git branch upstream
 - gbp import-orig ../../upstream/Font-version.tar.xz
+- # if needed, restore saved debian/ directory
+- git add debian
+- git commit -m "Re-add the pre-existing debian directory"
 - git add debian
 - git commit -m "Add packaging files"
 
@@ -26,9 +32,6 @@ Project description: Debian packaging for fonts-sil-YOURFONT
 - `gpg --armor --detach-sign Font-version.tar.xz`
 - `gbp import-orig --uscan`
 - `gbp import-orig ../../upstream/Font-version.tar.xz`
-- if needed, restore saved debian/ directory
-  git add debian
-- `git commit -m "Re-add the pre-existing debian directory"`
 
 ## Packaging
 
