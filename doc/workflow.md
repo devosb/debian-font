@@ -15,15 +15,14 @@ Under the section `Settings/CI CD` then `General pipelines`
 - `git commit -m "create gbp.conf"`
 - or
 - `git commit -m "update gbp.conf"`
-- git branch upstream
-- gbp import-orig ../../upstream/Font-version.tar.xz
-- # if needed, restore saved debian/ directory
-- git add debian
-- git commit -m "Re-add the pre-existing debian directory"
-- git add debian
-- git commit -m "Add packaging files"
-
-### From Debian
+- `git branch upstream`
+- `gbp import-orig ../../upstream/Font-version.tar.xz`
+- if needed, restore saved debian/ directory
+- `git add debian`
+- `git commit -m "Re-add the pre-existing debian directory"`
+- then
+- `git add debian`
+- `git commit -m "Add packaging files"`
 
 # Ongoing
 
@@ -36,14 +35,15 @@ Under the section `Settings/CI CD` then `General pipelines`
 ## Packaging
 
 - `cd debian`
-- dch -i
-- code *
-- wrap-and-sort -asb # maybe
-- cd ..
-- git commit -a
-- gbp buildpackage
+- `dch -i`
+- `code *`
+- `grep -A 1 openTypeNameDescription source/*.ufo/*.plist`
+- `wrap-and-sort -asb` # maybe
+- `cd ..`
+- `git commit -a`
+- `gbp buildpackage`
 - `git commit -a -m "Update packaging for new upstream release"`
 - `git commit -a -m "Update and improve packaging"`
-- git tag -a debian/version # i.e., debian/1.000-1
-- git push --all
-- git push --tags
+- `git tag -a debian/version` # i.e., debian/1.000-1
+- `git push --all`
+- `git push --tags`

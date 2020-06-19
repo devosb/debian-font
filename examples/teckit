@@ -1,0 +1,87 @@
+#!/bin/sh
+
+TRUE=1
+FALSE=0
+
+usage()
+{
+    cat <<EOF
+usage: teckit [OPTIONS]... FILE...
+ [-m=MAP]   TECkit mapping file (compiled)
+ [-f=ENCODING FORM]   encoding form of input file
+ [-t=ENCODING FORM]   encoding form of output file, default is utf8
+                      allowed encoding forms are 
+                      bytes utf8 utf16be utf16le utf16 utf32be utf32le utf32
+ [-n=NORMALIZATION FORM]   Unicode normalization form to use,
+                           allowed values are
+                           nfc nfd
+EOF
+}
+
+version()
+{
+    echo "TECkit wrapper"
+}
+
+while getopts "m:f:t:n:hv" opts
+do
+case $opts in
+    m)
+        opt_m=$TRUE
+        arg_m=$OPTARG
+        ;;
+    f)
+        opt_f=$TRUE
+        arg_f=$OPTARG
+        ;;
+    t)
+        opt_t=$TRUE
+        arg_t=$OPTARG
+        ;;
+    n)
+        opt_n=$TRUE
+        arg_n=$OPTARG
+        ;;
+    v)
+        version
+        exit 0
+        ;;
+    h|\?)
+        usage
+        exit 1
+        ;;
+esac
+done
+shift `expr $OPTIND - 1`
+
+options=""
+
+if [ "$opt_m" ]
+then
+    options="$options -t $arg_m"
+fi
+
+if [ "$opt_f" ]
+then
+    options="$options -if $arg_f"
+fi
+
+if [ "$opt_t" ]
+then
+    options="$options -of $arg_t"
+fi
+
+if [ "$opt_n" ]
+then
+    options="$options -$arg_n"
+fi
+
+for file in "$@"
+do
+    tmpfile="$file.$$.tmp"
+    txtconv.exe -i "$file" -o "$tmpfile" $options
+    if [ -r "$tmpfile" ]
+    then
+        mv --force "$tmpfile" "$file" 
+    fi
+done

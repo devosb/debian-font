@@ -1,0 +1,26 @@
+#!/bin/sh
+
+configdir=$HOME/.smadison/cache
+mkdir -p $configdir
+cd $configdir
+
+case $1 in
+    update)
+        curl --output Packages_pso_#1#2_#3_#4.gz http://packages.sil.org/ubuntu/dists/{precise,trusty,utopic,vivid,wily,xenial}{'',-experimental}/{main,multiverse,restricted,universe}/{binary-amd64,binary-i386}/Packages.gz
+        curl --output Packages_pso_#1_#2_#3.gz http://packages.sil.org/debian/dists/{squeeze,wheezy,jessie,stretch,sid}/{contrib,main,non-free}/{binary-amd64,binary-i386}/Packages.gz
+        gunzip -f *.gz
+        ;;
+    search)
+        if [ "$2" = "-v" ]
+        then
+            pkg=$3
+            grep --color=auto "Filename:.*$pkg" *
+        else
+            pkg=$2
+            grep --color=auto "Package: $pkg" *
+        fi
+        ;;
+    *)
+        echo "invalid operation"
+        ;;
+esac

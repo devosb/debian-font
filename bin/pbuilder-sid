@@ -1,0 +1,32 @@
+#!/bin/bash
+
+umask 022
+
+export DISTRIBUTIONS=sid
+export ARCHES=amd64
+
+#PBUILDERDIR=$HOME/pbuilder
+export PBUILDERDIR=/srv/bobby/pbuilder
+export PBUILDFOLDER=$PBUILDERDIR
+
+mode=$1
+
+case $mode in
+    create|update|build|clean|login|execute)
+        mkdir -p $PBUILDERDIR/$DISTRIBUTIONS/$ARCHES/result
+        pbuilder-dist $DISTRIBUTIONS $ARCHES $mode --buildresult $PBUILDERDIR/$DISTRIBUTIONS/$ARCHES/result "$2"
+        ;;
+    upload)
+        rsync -a -v --delete $PWD packager.lsdev.sil.org:sid
+        ssh packager.lsdev.sil.org dput sid/result/*.changes
+        ;;
+    sign)
+        debsign *.changes
+        ;;
+    list|distclean)
+        pbuilder-pso $mode "$2"
+        ;;
+    *)
+        echo "invalid operation"
+        ;;
+esac

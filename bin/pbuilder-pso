@@ -1,0 +1,137 @@
+#!/bin/bash
+
+umask 022
+
+RD='\033[0;31m' # Red
+GN='\033[0;32m' # Green
+NC='\033[0m' # No Color
+
+log()
+{
+    echo -e "${GN}$1${NC}"
+}
+
+userrc=$HOME/.pprc
+if [ -f ${userrc} ]
+then
+    source ${userrc}
+fi
+
+projectrc=../pprc
+if [ -f ${projectrc} ]
+then
+    source ${projectrc}
+fi
+
+DISTRIBUTIONS=${DISTRIBUTIONS:-$DISTS}
+ARCHES=${ARCHES:-i386 amd64}
+
+#PBUILDERDIR=$HOME/pbuilder
+export PBUILDERDIR=/srv/bobby/pbuilder
+export PBUILDFOLDER=$PBUILDERDIR
+
+mode=$1
+pbmode=$mode
+
+case $mode in
+    create|update|build|build-multi|clean|login|execute)
+        case $mode in
+            build)
+                # buildopts="--debbuildopts -sa" # always include source
+                buildopts=""
+                ;;
+            build-multi)
+                buildopts="--debbuildopts -b" # --hookdir $PBUILDERDIR/hooks-multi"
+                pbmode=build
+                ;;
+        esac
+
+        for DIST in $DISTRIBUTIONS
+        do
+            for ARCH in $ARCHES
+            do
+                log "running ${RD}${pbmode}${GN} for ${RD}$DIST${GN} with ${RD}$ARCH"
+                mkdir -p $PBUILDERDIR/$DIST/$ARCH/{aptcache,build,result}
+                sudo pbuilder --$pbmode --distribution $DIST --architecture $ARCH --basetgz $PBUILDERDIR/$DIST/$ARCH/base.tgz --aptcache $PBUILDERDIR/$DIST/$ARCH/aptcache --buildplace $PBUILDERDIR/$DIST/$ARCH/build --buildresult $PBUILDERDIR/$DIST/$ARCH/result --extrapackages "apt-utils devscripts lsb-release apt-transport-https libdistro-info-perl" $buildopts "$2"
+            done
+        done
+        ;;
+    list)
+        for DIST in $DISTRIBUTIONS
+        do
+            for ARCH in $ARCHES
+            do
+                log "${RD}$DIST${GN} for ${RD}$ARCH"
+                ls -lFh $PBUILDERDIR/$DIST/$ARCH/result
+                log
+            done
+        done
+        ;;
+    sign)
+        if [ -f "$2" ]
+        then
+            log "signing"
+            debsign "$2"
+        else
+            for DIST in $DISTRIBUTIONS
+            do
+                for ARCH in $ARCHES
+                do
+                    log "signing ${RD}$ARCH${GN} in ${RD}$DIST"
+                    debsign $PBUILDERDIR/$DIST/$ARCH/result/*.changes
+                done
+            done
+        fi
+        ;;
+    upload)
+        for DIST in $DISTRIBUTIONS
+        do
+            BASEDIST=$DIST
+            # break
+        done
+
+        for ARCH in $ARCHES
+        do
+            BASEARCH=$ARCH
+            # break
+        done
+
+        for DIST in $DISTRIBUTIONS
+        do
+            log "uploading to ${RD}$DIST${GN} from ${RD}$BASEARCH${GN} in ${RD}$BASEDIST"
+            pushd $PBUILDERDIR/$BASEDIST/$BASEARCH/result
+            dput packager:ubuntu/$DIST *.changes
+            mv -v *.packager.upload upload-log-$DIST.txt
+            popd
+        done
+        ;;
+    upload-multi)
+        for DIST in $DISTRIBUTIONS
+        do
+            if [ -f "$2" ]
+            then
+                log "uploading to ${RD}$DIST"
+                dput packager:ubuntu/$DIST "$2"
+            else
+                for ARCH in $ARCHES
+                do
+                    log "uploading ${RD}$ARCH${GN} to ${RD}$DIST"
+                    dput packager:ubuntu/$DIST $PBUILDERDIR/$DIST/$ARCH/result/*.changes
+                done
+            fi
+        done
+        ;;
+    distclean)
+        for DIST in $DISTRIBUTIONS
+        do
+            for ARCH in $ARCHES
+            do
+                rm -rf $PBUILDERDIR/$DIST/$ARCH/result
+                mkdir -p $PBUILDERDIR/$DIST/$ARCH/result
+            done
+        done
+        ;;
+    *)
+        log "invalid operation"
+        ;;
+esac
