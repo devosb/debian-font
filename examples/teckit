@@ -10,7 +10,7 @@ usage: teckit [OPTIONS]... FILE...
  [-m=MAP]   TECkit mapping file (compiled)
  [-f=ENCODING FORM]   encoding form of input file
  [-t=ENCODING FORM]   encoding form of output file, default is utf8
-                      allowed encoding forms are 
+                      allowed encoding forms are
                       bytes utf8 utf16be utf16le utf16 utf32be utf32le utf32
  [-n=NORMALIZATION FORM]   Unicode normalization form to use,
                            allowed values are
@@ -82,6 +82,6 @@ do
     txtconv.exe -i "$file" -o "$tmpfile" $options
     if [ -r "$tmpfile" ]
     then
-        mv --force "$tmpfile" "$file" 
+        mv --force "$tmpfile" "$file"
     fi
 done

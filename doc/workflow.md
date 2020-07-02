@@ -47,3 +47,7 @@ Under the section `Settings/CI CD` then `General pipelines`
 - `git tag -a debian/version` # i.e., debian/1.000-1
 - `git push --all`
 - `git push --tags`
+
+## Reverse dependencies
+- `build-rdeps`
+- `apt rdepends`
