@@ -11,10 +11,14 @@ Under the section `Settings/CI CD` then `General pipelines`
 
 ## Local
 
+The file `gbp.conf` might not be need anymore,
+since the compression it specified is now the default.
 - `git add debian/gbp.conf`
 - `git commit -m "create gbp.conf"`
 - or
 - `git commit -m "update gbp.conf"`
+
+This is still needed (although maybe not the part about saving the `debian` directory).
 - `git branch upstream`
 - `gbp import-orig ../../upstream/Font-version.tar.xz`
 - if needed, restore saved debian/ directory

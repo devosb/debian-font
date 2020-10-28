@@ -5,8 +5,7 @@ umask 022
 export DISTRIBUTIONS=sid
 export ARCHES=amd64
 
-#PBUILDERDIR=$HOME/pbuilder
-export PBUILDERDIR=/srv/bobby/pbuilder
+export PBUILDERDIR=$HOME/pbuilder
 export PBUILDFOLDER=$PBUILDERDIR
 
 mode=$1

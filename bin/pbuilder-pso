@@ -26,8 +26,7 @@ fi
 DISTRIBUTIONS=${DISTRIBUTIONS:-$DISTS}
 ARCHES=${ARCHES:-i386 amd64}
 
-#PBUILDERDIR=$HOME/pbuilder
-export PBUILDERDIR=/srv/bobby/pbuilder
+export PBUILDERDIR=$HOME/pbuilder
 export PBUILDFOLDER=$PBUILDERDIR
 
 mode=$1
