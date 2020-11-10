@@ -5,26 +5,14 @@
 ## Salsa
 
 Under the section `Settings/General`
-- Project description (optional): Debian packaging for fonts-sil-YOURFONT
+- Project description (optional): Debian packaging for fonts-sil-FontName
 Under the section `Settings/CI CD` then `General pipelines`
 - Custom CI configuration path: `debian/salsa-ci.yml`
 
 ## Local
 
-The file `gbp.conf` might not be need anymore,
-since the compression it specified is now the default.
-- `git add debian/gbp.conf`
-- `git commit -m "create gbp.conf"`
-- or
-- `git commit -m "update gbp.conf"`
-
-This is still needed (although maybe not the part about saving the `debian` directory).
 - `git branch upstream`
-- `gbp import-orig ../../upstream/Font-version.tar.xz`
-- if needed, restore saved debian/ directory
-- `git add debian`
-- `git commit -m "Re-add the pre-existing debian directory"`
-- then
+- `gbp import-orig ../../upstream/FontName-version.tar.xz` # package name is fonts-sil-reponame, not FontName
 - `git add debian`
 - `git commit -m "Add packaging files"`
 
