@@ -83,22 +83,25 @@ case $mode in
         fi
         ;;
     upload)
-        for DIST in $DISTRIBUTIONS
-        do
-            BASEDIST=$DIST
-            # break
-        done
-
         for ARCH in $ARCHES
         do
             BASEARCH=$ARCH
-            # break
+        done
+
+        for DIST in $DISTRIBUTIONS
+        do
+            BASEDIST=$DIST
+            BASERESULT=$PBUILDERDIR/$BASEDIST/$BASEARCH/result
+            if [ -f $BASERESULT/*.changes ]
+            then
+                break
+            fi
         done
 
         for DIST in $DISTRIBUTIONS
         do
             log "uploading to ${RD}$DIST${GN} from ${RD}$BASEARCH${GN} in ${RD}$BASEDIST"
-            pushd $PBUILDERDIR/$BASEDIST/$BASEARCH/result
+            pushd $BASERESULT
             dput packager:ubuntu/$DIST *.changes
             mv -v *.packager.upload upload-log-$DIST.txt
             popd
