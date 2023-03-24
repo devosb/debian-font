@@ -27,7 +27,7 @@ Under the section `Settings/CI CD` then `General pipelines`
 ## Packaging
 
 - `cd debian`
-- `dch -i`
+- `dch -i` # gbp dch -a # dch -r
 - `code *`
 - `grep -A 1 openTypeNameDescription source/*.ufo/*.plist`
 - `wrap-and-sort -asb` # maybe
@@ -36,8 +36,8 @@ Under the section `Settings/CI CD` then `General pipelines`
 - `gbp buildpackage`
 - `git commit -a -m "Update packaging for new upstream release"`
 - `git commit -a -m "Update and improve packaging"`
-- `git tag -a debian/version` # i.e., debian/1.000-1
-- `git push --all`
+- `git tag -a debian/version` # i.e., debian/1.000-1 # gbp tag
+- `git push --all` # gbp push
 - `git push --tags`
 
 ## Reverse dependencies
