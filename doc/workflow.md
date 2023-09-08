@@ -18,6 +18,19 @@ Under the section `Settings/CI CD` then `General pipelines`
 
 # Ongoing
 
+## GPG key expiration
+
+- `gpg --edit-key keyid`
+  - `expire`
+  - `key 1`
+  - `expire`
+- `gpg --export keyid`
+- upload to
+  - Ubuntu keyserver
+  - GitHub
+  - PSO
+  - Thunderbird
+
 ## Release
 
 - `gpg --armor --detach-sign Font-version.tar.xz`
