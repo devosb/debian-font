@@ -34,24 +34,32 @@ Under the section `Settings/CI CD` then `General pipelines`
 ## Release
 
 - `gpg --armor --detach-sign Font-version.tar.xz`
-- `gbp import-orig --uscan`
-- `gbp import-orig ../../upstream/Font-version.tar.xz`
 
 ## Packaging
 
-- `cd debian`
-- `dch -i` # gbp dch -a # dch -r
-- `code *`
-- `grep -A 1 openTypeNameDescription source/*.ufo/*.plist`
-- `wrap-and-sort -asb` # maybe
-- `cd ..`
-- `git commit -a`
-- `gbp buildpackage`
-- `git commit -a -m "Update packaging for new upstream release"`
-- `git commit -a -m "Update and improve packaging"`
-- `git tag -a debian/version` # i.e., debian/1.000-1 # gbp tag
-- `git push --all` # gbp push
-- `git push --tags`
+- [repo] `cd sid/fonts-sil-font`
+- [repo] `git pull --all`
+- [repo] `gbp import-orig --uscan`
+- [repo] `gbp import-orig ../../upstream/Font-version.tar.xz`
+- [repo] `cd debian`
+- [repo] `dch -i`
+- [repo] `code .`
+- [repo] `grep -A 1 openTypeNameDescription source/*.ufo/*.plist`
+- [repo] `wrap-and-sort -asb` # maybe
+- [build] `cd build`
+- [build] `./build ../sid/fonts-sil-reponame`
+- [result] `cd result`
+- [result] `pbuilder-sid build *.dsc`
+- [repo] `cd ..`
+- [repo] `git commit -a -m "Update packaging for new upstream release"`
+- [repo] `git commit -a -m "Update and improve packaging"`
+- [repo] `gbp tag` # debian/1.000-1
+- [repo] `gbp push` # git push --all; git push --tags
+- [result] `pbuilder-sid sign`
+- [result] `pbuilder-sid upload`
+- [result] `pbuilder-pso build *.dsc`
+- [result] `pbuilder-pso sign`
+- [result] `pbuilder-pso upload`
 
 ## Reverse dependencies
 - `build-rdeps`

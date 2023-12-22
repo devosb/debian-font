@@ -2,18 +2,18 @@
 
 umask 022
 
-export DISTRIBUTIONS=sid
+export DISTS=sid
 export ARCHES=amd64
 
-export PBUILDERDIR=$HOME/pbuilder
+export PBUILDERDIR=/var/opt/pbuilder
 export PBUILDFOLDER=$PBUILDERDIR
 
 mode=$1
 
 case $mode in
     create|update|build|clean|login|execute)
-        mkdir -p $PBUILDERDIR/$DISTRIBUTIONS/$ARCHES/result
-        pbuilder-dist $DISTRIBUTIONS $ARCHES $mode --buildresult $PBUILDERDIR/$DISTRIBUTIONS/$ARCHES/result "$2"
+        mkdir -p $PBUILDERDIR/$DISTS/$ARCHES/result
+        pbuilder-dist $DISTS $ARCHES $mode --buildresult $PBUILDERDIR/$DISTS/$ARCHES/result "$2"
         ;;
     upload)
         rsync -a -v --delete $PWD packager.lsdev.sil.org:sid
