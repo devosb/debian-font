@@ -23,10 +23,10 @@ then
     source ${projectrc}
 fi
 
-DISTRIBUTIONS=${DISTRIBUTIONS:-$DISTS}
-ARCHES=${ARCHES:-i386 amd64}
+DISTS=${DISTS:-$DISTRIBUTIONS}
+ARCHES=${ARCHES:-amd64}
 
-export PBUILDERDIR=$HOME/pbuilder
+export PBUILDERDIR=/var/opt/pbuilder
 export PBUILDFOLDER=$PBUILDERDIR
 
 mode=$1
@@ -36,16 +36,16 @@ case $mode in
     create|update|build|build-multi|clean|login|execute)
         case $mode in
             build)
-                # buildopts="--debbuildopts -sa" # always include source
-                buildopts=""
+                buildopts="--debbuildopts -sa" # always include source
+                # buildopts=""
                 ;;
             build-multi)
-                buildopts="--debbuildopts -b" # --hookdir $PBUILDERDIR/hooks-multi"
+                buildopts="--debbuildopts -b" # --hookdir $HOME/deb-source/hooks-multi"
                 pbmode=build
                 ;;
         esac
 
-        for DIST in $DISTRIBUTIONS
+        for DIST in $DISTS
         do
             for ARCH in $ARCHES
             do
@@ -56,12 +56,12 @@ case $mode in
         done
         ;;
     list)
-        for DIST in $DISTRIBUTIONS
+        for DIST in $DISTS
         do
             for ARCH in $ARCHES
             do
                 log "${RD}$DIST${GN} for ${RD}$ARCH"
-                ls -lFh $PBUILDERDIR/$DIST/$ARCH/result
+                ls -lFh $PBUILDERDIR/$DIST/$ARCH/result $PBUILDERDIR/$DIST/$ARCH/result/upload*
                 log
             done
         done
@@ -72,7 +72,7 @@ case $mode in
             log "signing"
             debsign "$2"
         else
-            for DIST in $DISTRIBUTIONS
+            for DIST in $DISTS
             do
                 for ARCH in $ARCHES
                 do
@@ -88,27 +88,32 @@ case $mode in
             BASEARCH=$ARCH
         done
 
-        for DIST in $DISTRIBUTIONS
+        for DIST in $DISTS
         do
             BASEDIST=$DIST
             BASERESULT=$PBUILDERDIR/$BASEDIST/$BASEARCH/result
-            if [ -f $BASERESULT/*.changes ]
-            then
-                break
-            fi
+            for changes in $BASERESULT/*.changes
+            do
+                if [ -f $changes ]
+                then
+                    break
+                fi
+            done
         done
 
-        for DIST in $DISTRIBUTIONS
+        for DIST in $DISTS
         do
             log "uploading to ${RD}$DIST${GN} from ${RD}$BASEARCH${GN} in ${RD}$BASEDIST"
             pushd $BASERESULT
-            dput packager:ubuntu/$DIST *.changes
-            mv -v *.packager.upload upload-log-$DIST.txt
+            dput packager:ubuntu/$DIST *.amd64.changes
+            logs=upload-log-$DIST
+            mkdir $logs
+            mv -v *.packager.upload $logs
             popd
         done
         ;;
     upload-multi)
-        for DIST in $DISTRIBUTIONS
+        for DIST in $DISTS
         do
             if [ -f "$2" ]
             then
@@ -118,13 +123,13 @@ case $mode in
                 for ARCH in $ARCHES
                 do
                     log "uploading ${RD}$ARCH${GN} to ${RD}$DIST"
-                    dput packager:ubuntu/$DIST $PBUILDERDIR/$DIST/$ARCH/result/*.changes
+                    dput packager:ubuntu/$DIST $PBUILDERDIR/$DIST/$ARCH/result/*.amd64.changes
                 done
             fi
         done
         ;;
     distclean)
-        for DIST in $DISTRIBUTIONS
+        for DIST in $DISTS
         do
             for ARCH in $ARCHES
             do
